@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.8'
 
 services:
   frontend:
@@ -24,6 +24,21 @@ services:
       - 4000:4000
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres?schema=public
+    depends_on:
+      - db
+    command: ./start.sh
+  
+  nginx:
+    container_name: nginx
+    image: nginx
+    build:
+      context: ./nginx
+      dockerfile: nginx.dockerfile
+    ports:
+      - 80:80
+    depends_on:
+      - frontend
+      - backend
   db:
     container_name: db
     image: postgres:12
