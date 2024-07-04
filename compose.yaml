@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.7'
 
 services:
   frontend:
@@ -10,10 +10,13 @@ services:
     ports:
       - 3000:3000
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:4000
+      - NEXT_PUBLIC_API_URL=http://backend:4000
     restart: always
     depends_on:
       - backend
+    networks:
+      - app-network
+
   backend:
     container_name: backend
     image: backend
@@ -27,7 +30,9 @@ services:
     depends_on:
       - db
     command: ./start.sh
-  
+    networks:
+      - app-network
+
   nginx:
     container_name: nginx
     image: nginx
@@ -39,6 +44,9 @@ services:
     depends_on:
       - frontend
       - backend
+    networks:
+      - app-network
+
   db:
     container_name: db
     image: postgres:12
@@ -51,6 +59,21 @@ services:
       - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
+    command: >
+      sh -c "
+        echo 'CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) UNIQUE NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );' | psql -U postgres"
+    networks:
+      - app-network
 
 volumes:
   pgdata: {}
+
+networks:
+  app-network:
+    driver: bridge
