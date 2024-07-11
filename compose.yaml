@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 version: '3.7'
+=======
+version: '3'
+>>>>>>> working version of the application
 
 services:
   frontend:
@@ -10,13 +14,21 @@ services:
     ports:
       - 3000:3000
     environment:
+<<<<<<< HEAD
       - NEXT_PUBLIC_API_URL=http://backend:4000
+=======
+      - NEXT_PUBLIC_API_URL=http://localhost:4000
+>>>>>>> working version of the application
     restart: always
     depends_on:
       - backend
     networks:
+<<<<<<< HEAD
       - app-network
 
+=======
+      - fullstack-network
+>>>>>>> working version of the application
   backend:
     container_name: backend
     image: backend
@@ -27,12 +39,21 @@ services:
       - 4000:4000
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres?schema=public
+<<<<<<< HEAD
     depends_on:
       - db
     command: ./start.sh
     networks:
       - app-network
 
+=======
+    command: ./start.sh
+    depends_on:
+      - db
+    networks:
+      - fullstack-network
+  
+>>>>>>> working version of the application
   nginx:
     container_name: nginx
     image: nginx
@@ -45,8 +66,12 @@ services:
       - frontend
       - backend
     networks:
+<<<<<<< HEAD
       - app-network
 
+=======
+      - fullstack-network
+>>>>>>> working version of the application
   db:
     container_name: db
     image: postgres:12
@@ -60,11 +85,21 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
+<<<<<<< HEAD
       - app-network
+=======
+      - fullstack-network
+>>>>>>> working version of the application
 
 volumes:
   pgdata: {}
 
 networks:
+<<<<<<< HEAD
   app-network:
     driver: bridge
+=======
+  fullstack-network:
+    driver: bridge
+  
+>>>>>>> working version of the application

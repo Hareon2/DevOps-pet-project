@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Use Node.js version 20 as the base image
 FROM node:20
 
@@ -18,4 +19,20 @@ RUN npx prisma generate
 COPY . .
 
 # Make the start.sh script executable
+=======
+FROM node:20
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY prisma ./prisma
+
+RUN npx prisma generate
+
+COPY . .
+
+>>>>>>> working version of the application
 RUN chmod +x ./start.sh
