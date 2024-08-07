@@ -11,39 +11,35 @@ on:
 jobs:
   test-ssh-connection:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up SSH key
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
         run: |
-          echo "Настройка SSH ключа"
+          echo "Setting up SSH public key"
           mkdir -p ~/.ssh
-          echo "${SSH_PRIVATE_KEY}" | tr -d '\r' > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo "Настройка SSH ключа завершена"
+          echo "${SSH_PUBLIC_KEY}" > ~/.ssh/id_rsa.pub
+          chmod 644 ~/.ssh/id_rsa.pub
+          echo "SSH public key setup completed"
           
       - name: Add SSH host to known_hosts
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          echo "Добавление хоста в known_hosts"
-          mkdir -p ~/.ssh
-          echo "Выполнение команды ssh-keyscan"
-          ssh-keyscan -H "${SSH_HOST}" -v >> ~/.ssh/known_hosts
-          if [ $? -ne 0 ]; then
-            echo "Ошибка при выполнении команды ssh-keyscan"
-            exit 1
-          fi
-          echo "Хост добавлен в known_hosts"
+          echo "Adding host to known_hosts"
+          ssh-keyscan -H "${SSH_HOST}" >> ~/.ssh/known_hosts
+          echo "Host added to known_hosts"
 
       - name: Test SSH Connection
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          echo "Тестирование SSH соединения"
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" 'echo "SSH соединение успешно"'
+          echo "Testing SSH connection"
+          ssh -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" 'echo "SSH connection successful"'
+
 
