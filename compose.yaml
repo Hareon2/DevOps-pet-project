@@ -66,4 +66,3 @@ volumes:
 networks:
   fullstack-network:
     driver: bridge
-  
