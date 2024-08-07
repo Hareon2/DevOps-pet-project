@@ -11,11 +11,13 @@ on:
 jobs:
   test-ssh-connection:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+      
+      - name: Print SSH_HOST
+        run: echo "SSH_HOST: ${{ secrets.SSH_HOST }}"
+        
       - name: Set up SSH key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
