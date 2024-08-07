@@ -14,29 +14,25 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
-      - name: Print SSH_HOST
-        run: echo "SSH_HOST: ${{ secrets.SSH_HOST }}"
-        
+
       - name: Set up SSH key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_HOST: 192.168.0.102
         run: |
-          set -e  # Завершить выполнение скрипта при ошибке
           echo "Setting up SSH key"
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           # Добавляем хост в known_hosts
           echo "Adding host to known_hosts"
-          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts || { echo "Failed to add host to known_hosts"; exit 1; }
+          ssh-keyscan -H "192.168.0.102" >> ~/.ssh/known_hosts
           echo "SSH key setup complete"
 
       - name: Test SSH Connection
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_HOST: 192.168.0.102
         run: |
           echo "Testing SSH connection"
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" 'echo "SSH connection successful"'
