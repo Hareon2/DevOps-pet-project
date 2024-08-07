@@ -31,7 +31,12 @@ jobs:
         run: |
           echo "Добавление хоста в known_hosts"
           mkdir -p ~/.ssh
+          echo "Выполнение команды ssh-keyscan"
           ssh-keyscan -H "${SSH_HOST}" >> ~/.ssh/known_hosts
+          if [ $? -ne 0 ]; then
+            echo "Ошибка при выполнении команды ssh-keyscan"
+            exit 1
+          fi
           echo "Хост добавлен в known_hosts"
 
       - name: Test SSH Connection
@@ -41,3 +46,4 @@ jobs:
         run: |
           echo "Тестирование SSH соединения"
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" 'echo "SSH соединение успешно"'
+
