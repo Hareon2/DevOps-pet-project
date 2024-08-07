@@ -14,17 +14,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Обновлено до последней версии
 
       - name: Set up SSH key
         env:
-          SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          echo "Setting up SSH public key"
+          echo "Setting up SSH private key"
           mkdir -p ~/.ssh
-          echo "${SSH_PUBLIC_KEY}" > ~/.ssh/id_rsa.pub
-          chmod 644 ~/.ssh/id_rsa.pub
-          echo "SSH public key setup completed"
+          echo "${SSH_PRIVATE_KEY}" | tr -d '\r' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "SSH private key setup completed"
           
       - name: Add SSH host to known_hosts
         env:
@@ -40,6 +40,6 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
           echo "Testing SSH connection"
-          ssh -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" 'echo "SSH connection successful"'
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" 'echo "SSH connection successful"'
 
 
