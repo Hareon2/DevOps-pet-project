@@ -1,12 +1,23 @@
-name: CI/CD Pipeline
+name: Test Runner
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main  # Измените на вашу основную ветку, если необходимо
+  workflow_dispatch:  # Позволяет вручную запускать workflow
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted  # Указывает на использование вашего self-hosted Runner
     steps:
-      - name: Display some text
-        run: echo "test"
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run a simple command
+        run: echo "Hello, GitHub Actions Runner is working!"
+
+      - name: List directory contents
+        run: ls -la
+
+      - name: Display current date and time
+        run: date
